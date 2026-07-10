@@ -23,10 +23,7 @@ function toNumber(value) {
 }
 
 function formatNumber(value) {
-  if (!Number.isFinite(value)) {
-    return "エラー";
-  }
-
+  if (!Number.isFinite(value)) return "Error";
   const rounded = Math.round((value + Number.EPSILON) * 100) / 100;
   return new Intl.NumberFormat("ja-JP", {
     maximumFractionDigits: Number.isInteger(rounded) ? 0 : 2,
@@ -41,28 +38,16 @@ function setCurrentInput(value) {
     shouldResetInput = true;
     return;
   }
-
   currentInput = String(Math.round((value + Number.EPSILON) * 100000000) / 100000000);
   shouldResetInput = true;
-}
-
-function calculateCost(baseValue) {
-  return baseValue * 1.1;
-}
-
-function calculatePrice(costValue) {
-  const markupRate = selectedRate / 100;
-  return costValue / (1 - markupRate);
 }
 
 function updateDisplays() {
   const baseValue = toNumber(currentInput);
   inputDisplay.textContent = formatNumber(baseValue);
-
-  const costValue = calculateCost(baseValue);
-  const priceValue = calculatePrice(costValue);
+  const costValue = baseValue * 1.1;
   costDisplay.textContent = formatNumber(costValue);
-  priceDisplay.textContent = formatNumber(priceValue);
+  priceDisplay.textContent = formatNumber(costValue / (1 - selectedRate / 100));
 }
 
 function appendValue(value) {
@@ -70,43 +55,31 @@ function appendValue(value) {
     currentInput = value === "." ? "0." : value;
     shouldResetInput = false;
   } else if (value === ".") {
-    if (currentInput.includes(".")) {
-      return;
-    }
+    if (currentInput.includes(".")) return;
     currentInput += ".";
   } else if (currentInput === "0") {
     currentInput = value === "00" ? "0" : value;
   } else {
     currentInput += value;
   }
-
-  if (currentInput.length > 12) {
-    currentInput = currentInput.slice(0, 12);
-  }
-
+  if (currentInput.length > 12) currentInput = currentInput.slice(0, 12);
   updateDisplays();
 }
 
 function runPendingCalculation() {
-  if (pendingOperator === null || storedValue === null) {
-    return toNumber(currentInput);
-  }
-
-  const nextValue = toNumber(currentInput);
-  return operators[pendingOperator](storedValue, nextValue);
+  if (pendingOperator === null || storedValue === null) return toNumber(currentInput);
+  return operators[pendingOperator](storedValue, toNumber(currentInput));
 }
 
 function chooseOperator(operator) {
-  const result = runPendingCalculation();
-  setCurrentInput(result);
+  setCurrentInput(runPendingCalculation());
   storedValue = toNumber(currentInput);
   pendingOperator = operator;
   updateDisplays();
 }
 
 function handleEquals() {
-  const result = runPendingCalculation();
-  setCurrentInput(result);
+  setCurrentInput(runPendingCalculation());
   storedValue = null;
   pendingOperator = null;
   updateDisplays();
@@ -137,34 +110,16 @@ function backspace() {
 }
 
 function handleKeyPress(key) {
-  const value = key.dataset.value;
-  const operator = key.dataset.operator;
-  const action = key.dataset.action;
-
-  if (value !== undefined) {
-    appendValue(value);
-    return;
-  }
-
-  if (operator) {
-    chooseOperator(operator);
-    return;
-  }
-
-  if (action === "equals") {
-    handleEquals();
-  } else if (action === "clear") {
-    clearInput();
-  } else if (action === "all-clear") {
-    allClear();
-  } else if (action === "backspace") {
-    backspace();
-  }
+  const { value, operator, action } = key.dataset;
+  if (value !== undefined) return appendValue(value);
+  if (operator) return chooseOperator(operator);
+  if (action === "equals") handleEquals();
+  else if (action === "clear") clearInput();
+  else if (action === "all-clear") allClear();
+  else if (action === "backspace") backspace();
 }
 
-keys.forEach((key) => {
-  key.addEventListener("click", () => handleKeyPress(key));
-});
+keys.forEach((key) => key.addEventListener("click", () => handleKeyPress(key)));
 
 rateButtons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -177,19 +132,21 @@ rateButtons.forEach((button) => {
 
 document.addEventListener("keydown", (event) => {
   const key = event.key;
-
-  if (/^[0-9.]$/.test(key)) {
-    appendValue(key);
-  } else if (["+", "-", "*", "/"].includes(key)) {
-    chooseOperator(key);
-  } else if (key === "Enter" || key === "=") {
+  if (/^[0-9.]$/.test(key)) appendValue(key);
+  else if (["+", "-", "*", "/"].includes(key)) chooseOperator(key);
+  else if (key === "Enter" || key === "=") {
     event.preventDefault();
     handleEquals();
-  } else if (key === "Backspace") {
-    backspace();
-  } else if (key === "Escape") {
-    allClear();
-  }
+  } else if (key === "Backspace") backspace();
+  else if (key === "Escape") allClear();
 });
 
 updateDisplays();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((error) => {
+      console.error("Service Worker registration failed:", error);
+    });
+  });
+}

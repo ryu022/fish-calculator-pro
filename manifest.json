@@ -1,1 +1,17 @@
-{"name":"鮮魚電卓 Pro","short_name":"鮮魚電卓","display":"standalone","start_url":"./index.html"}
+{
+  "name": "Fish Calculator Pro",
+  "short_name": "Fish Calc",
+  "description": "A quick calculator for purchase cost and sale price.",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7f5",
+  "theme_color": "#0d3b2e",
+  "icons": [{
+    "src": "assets/icon.png",
+    "sizes": "1254x1254",
+    "type": "image/png",
+    "purpose": "any maskable"
+  }]
+}
