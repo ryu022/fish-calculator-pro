@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>魚計算機 Pro Ver2.0</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" aria-label="魚計算機 Pro Ver2.0">
+    <header class="top-bar">
+      <div>
+        <p class="app-label">魚計算機</p>
+        <h1>Pro Ver2.0</h1>
+      </div>
+      <div class="status-dot" aria-hidden="true"></div>
+    </header>
+
+    <section class="display-panel" aria-live="polite">
+      <div class="display-row">
+        <span>入力</span>
+        <strong id="inputDisplay">0</strong>
+      </div>
+      <div class="display-row">
+        <span>経費込</span>
+        <strong id="costDisplay">0</strong>
+      </div>
+      <div class="display-row result">
+        <span>売価</span>
+        <strong id="priceDisplay">0</strong>
+      </div>
+    </section>
+
+    <section class="rate-grid" aria-label="値入率">
+      <button class="rate-btn active" type="button" data-rate="30">30%</button>
+      <button class="rate-btn" type="button" data-rate="35">35%</button>
+      <button class="rate-btn" type="button" data-rate="40">40%</button>
+      <button class="rate-btn" type="button" data-rate="45">45%</button>
+      <button class="rate-btn" type="button" data-rate="50">50%</button>
+    </section>
+
+    <section class="keypad" aria-label="電卓">
+      <button class="key utility" type="button" data-action="clear">C</button>
+      <button class="key utility" type="button" data-action="all-clear">AC</button>
+      <button class="key utility" type="button" data-action="backspace">←</button>
+      <button class="key utility" type="button" data-value="00">00</button>
+
+      <button class="key" type="button" data-value="7">7</button>
+      <button class="key" type="button" data-value="8">8</button>
+      <button class="key" type="button" data-value="9">9</button>
+      <button class="key operator" type="button" data-operator="/">÷</button>
+
+      <button class="key" type="button" data-value="4">4</button>
+      <button class="key" type="button" data-value="5">5</button>
+      <button class="key" type="button" data-value="6">6</button>
+      <button class="key operator" type="button" data-operator="*">×</button>
+
+      <button class="key" type="button" data-value="1">1</button>
+      <button class="key" type="button" data-value="2">2</button>
+      <button class="key" type="button" data-value="3">3</button>
+      <button class="key operator" type="button" data-operator="-">−</button>
+
+      <button class="key zero" type="button" data-value="0">0</button>
+      <button class="key" type="button" data-value=".">.</button>
+      <button class="key equals" type="button" data-action="equals">=</button>
+      <button class="key operator" type="button" data-operator="+">+</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
